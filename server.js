@@ -2,7 +2,6 @@ let express = require('express')
 let session = require('express-session')
 let passport = require('passport')
 let LocalStrategy = require('passport-local')
-// let client = require('mongodb').MongoClient;
 let mongoose = require('mongoose');
 let ObjectId = require('mongodb').ObjectId;
 let User = require('./models/user');
@@ -40,7 +39,6 @@ mongoose.connect(uri).then((result)=>{
         })
 
         passport.serializeUser((user, done)=>{
-            console.log(user._id);
             done(null, user._id)
         });
         passport.deserializeUser((userId, done)=>{
@@ -54,7 +52,7 @@ mongoose.connect(uri).then((result)=>{
         let findUserDoc = new LocalStrategy(
         (username, password, done)=>{
             User.findOne({username:username}, (err, user)=>{
-                console.log('User '+ username +' attempted to log in. His is password is '+password);
+                console.log('User '+ username +' attempted to log in.');
                 if (err){
                     return done(err)
                 }else if (!user){
@@ -77,7 +75,7 @@ mongoose.connect(uri).then((result)=>{
         app.post('/login', 
         passport.authenticate('local', {failureRedirect: '/'}),
         (req,res)=>{
-         console.log(req.user);
+         res.render('signin', {name: req.user.username});
         })
 
         // console.log(passport);
