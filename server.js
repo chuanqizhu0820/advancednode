@@ -5,6 +5,7 @@ let LocalStrategy = require('passport-local')
 let mongoose = require('mongoose');
 let ObjectId = require('mongodb').ObjectId;
 let User = require('./models/user');
+require('dotenv').config()
 let app = express();
 
 app.set('view engine', 'pug')
@@ -22,21 +23,8 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 
-let uri = "mongodb+srv://dbUser:dbUserpw1234@cluster0.qjxut.mongodb.net/node?retryWrites=true&w=majority";
-
-mongoose.connect(uri).then((result)=>{
-
-        app.listen(3000, ()=>{
-            console.log('your app is listening to the port 3000')
-        });
-
-        app.get('/add-user', (req, res)=>{
-            const user = new User({
-                username: "chuanqizhu",
-                password:"1991"
-            });
-            user.save().then((result)=>res.send(result));
-        })
+mongoose.connect(process.env.URI)
+.then((result)=>{
 
         passport.serializeUser((user, done)=>{
             done(null, user._id)
@@ -49,7 +37,7 @@ mongoose.connect(uri).then((result)=>{
             })
         });
 
-        let findUserDoc = new LocalStrategy(
+        passport.use(new LocalStrategy(
         (username, password, done)=>{
             User.findOne({username:username}, (err, user)=>{
                 console.log('User '+ username +' attempted to log in.');
@@ -64,13 +52,21 @@ mongoose.connect(uri).then((result)=>{
                 }
             })
         }
-        )
-
-        passport.use(findUserDoc);
+        ))
+        // console.log(passport);
 
         app.get('/', (req, res)=>{
         // console.log(req.session)
-        res.render('homepage', {message: "this is page to learn advanced node"})});
+        res.render('homepage', {message: "this is page to learn advanced node"})
+        });
+
+        app.get('/add-user', (req, res)=>{
+            const user = new User({
+                username: "chuanqizhu",
+                password:"1991"
+            });
+            user.save().then((result)=>res.send(result));
+        })
 
         app.post('/login', 
         passport.authenticate('local', {failureRedirect: '/'}),
@@ -78,5 +74,9 @@ mongoose.connect(uri).then((result)=>{
          res.render('signin', {name: req.user.username});
         })
 
-        // console.log(passport);
+        app.listen(3000, ()=>{
+            console.log('your app is listening to the port 3000')
+        });
+    }).catch((err)=>{
+        console.log(err);
     })
