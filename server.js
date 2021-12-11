@@ -79,7 +79,6 @@ mongoose.connect(process.env.URI)
             res.redirect('/');
         })
 
-
         app.get('/profile', (req, res, next)=>{
             if(req.isAuthenticated()){
                 next();
@@ -88,6 +87,12 @@ mongoose.connect(process.env.URI)
             }
         },(req, res)=>{
             res.render('profile', {name: req.user.username});
+        })
+
+        app.use((req, res)=>{
+            if (res.status(404)){
+                res.send('Not Found')
+            }
         })
 
         app.listen(3000, ()=>{
