@@ -74,6 +74,11 @@ mongoose.connect(process.env.URI)
          res.render('profile', {name: req.user.username});
         })
 
+        app.get('/logout', (req, res)=>{
+            req.logout();
+            res.redirect('/');
+        })
+
 
         app.get('/profile', (req, res, next)=>{
             if(req.isAuthenticated()){
