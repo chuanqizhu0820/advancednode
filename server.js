@@ -55,14 +55,6 @@ mongoose.connect(process.env.URI)
         ))
         // console.log(passport);
 
-        // app.get('/add-user', (req, res)=>{
-        //     const user = new User({
-        //         username: "chuanqizhu",
-        //         password:"1991"
-        //     });
-        //     user.save().then((result)=>res.send(result));
-        // })
-
         app.get('/', (req, res)=>{
         // console.log(req.session)
         res.render('homepage')
@@ -74,7 +66,7 @@ mongoose.connect(process.env.URI)
          res.render('profile', {name: req.user.username});
         })
 
-        app.post('/signup', (req, res)=>{
+        app.post('/signup', (req, res, next)=>{
             User.findOne({username: req.body.username}, (err, user)=>{
                 if (err){
                     console.log(err)
@@ -87,9 +79,11 @@ mongoose.connect(process.env.URI)
                     });
                     user.save().then((result)=>
                     {
-                        res.send(result);
+                        next();
                     })
                 }})
+        }, passport.authenticate('local', {failureRedirect: '/'}), (req, res)=>{
+            res.render('profile', {name: req.user.username});
         })
 
         app.get('/logout', (req, res)=>{
