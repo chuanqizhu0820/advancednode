@@ -5,7 +5,8 @@ let LocalStrategy = require('passport-local')
 let mongoose = require('mongoose');
 let ObjectId = require('mongodb').ObjectId;
 let User = require('./models/user');
-require('dotenv').config()
+require('dotenv').config();
+let bcrypt = require('bcrypt');
 let app = express();
 
 app.set('view engine', 'pug')
@@ -45,7 +46,7 @@ mongoose.connect(process.env.URI)
                     return done(err)
                 }else if (!user){
                     return done(null, false)
-                }else if (user.password!==password){
+                }else if (!bcrypt.compareSync(password, user.password)){
                     return done(null, false)
                 }else{
                     return done(null,user)
@@ -67,6 +68,7 @@ mongoose.connect(process.env.URI)
         })
 
         app.post('/signup', (req, res, next)=>{
+            const hash = bcrypt.hashSync(req.body.password, 12);
             User.findOne({username: req.body.username}, (err, user)=>{
                 if (err){
                     console.log(err)
@@ -75,7 +77,7 @@ mongoose.connect(process.env.URI)
                 }else if(!user){
                     const user = new User({
                         username: req.body.username,
-                        password: req.body.password
+                        password: hash
                     });
                     user.save().then((result)=>
                     {
