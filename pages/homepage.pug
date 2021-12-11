@@ -3,10 +3,18 @@ head
 title hello world!
 body
 h1 welcome to my page
-h2 #{message}
+
 form(action='/login', method='post')
     label Username:
     input(type='text', name='username')
     label Password:
-    input(type="password",name='password')
-    input(type='submit', value="Log In")
+    input(type='password', name='password')
+    input(type='submit', value='Log In')
+
+form(action='/signup', method='post')
+    label Username:
+    input(type='text', name='username')
+    label Password:
+    input(type='password', name='password')
+    input(type='submit', value='Sign Up')
+

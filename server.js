@@ -55,11 +55,6 @@ mongoose.connect(process.env.URI)
         ))
         // console.log(passport);
 
-        app.get('/', (req, res)=>{
-        // console.log(req.session)
-        res.render('homepage', {message: "this is page to learn advanced node"})
-        });
-
         // app.get('/add-user', (req, res)=>{
         //     const user = new User({
         //         username: "chuanqizhu",
@@ -68,10 +63,33 @@ mongoose.connect(process.env.URI)
         //     user.save().then((result)=>res.send(result));
         // })
 
+        app.get('/', (req, res)=>{
+        // console.log(req.session)
+        res.render('homepage')
+        });
+
         app.post('/login', 
         passport.authenticate('local', {failureRedirect: '/'}),
         (req,res)=>{
          res.render('profile', {name: req.user.username});
+        })
+
+        app.post('/signup', (req, res)=>{
+            User.findOne({username: req.body.username}, (err, user)=>{
+                if (err){
+                    console.log(err)
+                }else if (user){
+                    res.redirect('/')
+                }else if(!user){
+                    const user = new User({
+                        username: req.body.username,
+                        password: req.body.password
+                    });
+                    user.save().then((result)=>
+                    {
+                        res.send(result);
+                    })
+                }})
         })
 
         app.get('/logout', (req, res)=>{
