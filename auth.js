@@ -1,5 +1,6 @@
 const passport = require('passport');
 let LocalStrategy = require('passport-local');
+let GitHubStrategy = require('passport-github2').Strategy;
 let bcrypt = require('bcrypt');
 const User = require('./models/user');
 let ObjectId = require('mongodb').ObjectId;
@@ -33,5 +34,29 @@ passport.use(new LocalStrategy(
     })
 }
 ))
+
+passport.use(new GitHubStrategy({
+    clientID: process.env.GITHUB_CLIENT_ID,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    callbackURL: "http://localhost:3000/auth/github/callback"
+  },
+  function(accessToken, refreshToken, profile, done) {
+    User.findOne({ username: profile.username }, function (err, user) {
+        if (err){
+            return done(err);
+        }else if(!user){
+            const user = new User({
+                username: profile.username,
+                password: accessToken
+            })
+            user.save().then(user=>{
+                return done(null, user);
+            })
+        }else{
+            return done(null, user);
+        }
+    });
+  }
+));
 
 }

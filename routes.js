@@ -36,6 +36,11 @@ app.post('/signup', (req, res, next)=>{
     res.render('profile', {name: req.user.username});
 })
 
+app.get('/auth/github', passport.authenticate('github'));
+app.route('/auth/github/callback').get(passport.authenticate('github', { failureRedirect: '/' }), (req, res) => {
+    res.render('profile', {name: req.user.username});
+  });
+
 app.get('/logout', (req, res)=>{
     req.logout();
     res.redirect('/');
