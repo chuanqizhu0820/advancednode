@@ -2,7 +2,8 @@ const User = require('./models/user');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 
-module.exports = function (app){
+
+module.exports = function (app, server){
 
 app.get('/', (req, res)=>{
 // console.log(req.session)
@@ -62,7 +63,7 @@ app.use((req, res)=>{
     }
 })
 
-app.listen(3000, ()=>{
+server.listen(3000, ()=>{
     console.log('your app is listening to the port 3000')
 });
 }

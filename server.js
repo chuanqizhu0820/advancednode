@@ -1,5 +1,6 @@
 let express = require('express')
 let app = express();
+let server = require('http').createServer(app)
 let session = require('express-session')
 let passport = require('passport')
 let mongoose = require('mongoose');
@@ -27,7 +28,7 @@ mongoose.connect(process.env.URI)
 .then((result)=>{
 
     auth();
-    routes(app);
+    routes(app, server);
 
     }).catch((err)=>{
         console.log(err);
