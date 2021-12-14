@@ -13,6 +13,7 @@ const auth = require('./auth');
 app.set('view engine', 'pug')
 app.set('views', './pages')
 
+app.use(express.static('public'));
 app.use(express.urlencoded({
   extended: true
 }))
@@ -27,9 +28,11 @@ app.use(passport.session())
 
 mongoose.connect(process.env.URI)
 .then((result)=>{
-
     auth();
     routes(app, server);
+    io.on('connection', (client)=>{
+        console.log('A user is connected!');
+    })
 
     }).catch((err)=>{
         console.log(err);
