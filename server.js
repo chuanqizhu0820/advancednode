@@ -1,6 +1,7 @@
 let express = require('express')
 let app = express();
 let server = require('http').createServer(app)
+let io = require('socket.io')(server);
 let session = require('express-session')
 let passport = require('passport')
 let mongoose = require('mongoose');
