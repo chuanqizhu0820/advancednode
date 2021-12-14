@@ -30,8 +30,11 @@ mongoose.connect(process.env.URI)
 .then((result)=>{
     auth();
     routes(app, server);
-    io.on('connection', (client)=>{
+    let currentUser = 0;
+    io.on('connection', (socket)=>{
         console.log('A user is connected!');
+        ++currentUser;
+        io.emit('user count', currentUser)
     })
 
     }).catch((err)=>{
