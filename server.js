@@ -34,7 +34,12 @@ mongoose.connect(process.env.URI)
     io.on('connection', (socket)=>{
         console.log('A user is connected!');
         ++currentUser;
-        io.emit('user count', currentUser)
+        io.emit('user count', currentUser);
+
+        socket.on('disconnect', ()=>{
+            currentUser--;
+            io.emit('user count', currentUser);
+        })
     })
 
     }).catch((err)=>{
