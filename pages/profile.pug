@@ -3,6 +3,10 @@ head
 title #{name}
 body
 h2 Welcome #{name}
+p#msg
 a(href="/logout") Logout
+form(action='')
+    input#m(autocomplete='off')
+    button(type='submit' name="message") Send
 <script src='/socket.io/socket.io.js'></script>
 script(src='/client.js')

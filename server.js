@@ -48,14 +48,22 @@ mongoose.connect(process.env.URI)
     }
     });
 
-    let currentUser = 0;
+    let currentUsers = 0;
 
     io.on('connection', (socket)=>{
+        ++currentUsers;
 
-        console.log(socket.request.user);
+        io.emit('user', {
+            name: socket.request.user.username,
+            currentUsers,
+            connected: true
+        })
 
-        ++currentUser;
-        io.emit('user count', currentUser);
+        socket.on('chat message', (data)=>{
+            io.emit('announce message', {
+                message: data.message
+            })
+        })
 
         socket.on('disconnect', ()=>{
             currentUser--;
